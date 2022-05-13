@@ -38,4 +38,21 @@ class FSubject
     bool sizeChanged();
 };
 
+bool FSubject::fileExist()
+{
+    this->fileexist = QFile(this->filepath).exists();
+    return true;
+}
+
+bool FSubject::sizeChanged()
+{
+    float newsize = 0; //посчитать размер файала
+    if (this->filesize != newsize)
+    {
+        return true;
+    }
+
+    return false;
+}
+
 #endif // OBSERVER_H
