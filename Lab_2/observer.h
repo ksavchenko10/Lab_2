@@ -38,44 +38,5 @@ class FSubject
     bool sizeChanged();
 };
 
-bool FSubject::fileExist()
-{
-    this->fileexist = QFile(this->filepath).exists();
-    return true;
-}
-
-bool FSubject::sizeChanged()
-{
-    float newsize = 0; //посчитать размер файала
-    if (this->filesize != newsize)
-    {
-        return true;
-    }
-
-    return false;
-}
-
-void FSubject::attach(FileObserver *isfile)
-{
-    list.push_back(shop);
-}
-
-void FSubject::detach(FileObserver *isfile)
-{
-    list.erase(std::remove(list.begin(), list.end(), isfile), list.end());
-}
-
-
-void FSubject::notify()
-{
-    for (vector<FileObserver*>::const_iteratot iter = list.begin(); iter != list.end(); ++iter)
-    {
-        if (false) //если есть изменения
-        {
-            (*iter)->Update();
-        }
-
-    }
-}
 
 #endif // OBSERVER_H

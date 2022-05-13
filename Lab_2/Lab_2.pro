@@ -17,7 +17,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    main.cpp
+    main.cpp \
+    observer.cpp
 
 HEADERS += \
     observer.h
