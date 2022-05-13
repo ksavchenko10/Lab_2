@@ -1,5 +1,6 @@
 #ifndef OBSERVER_H
 #define OBSERVER_H
+#include <observer.cpp>
 #include <iostream>
 #include <QFile>
 #include <QMainWindow>
@@ -7,35 +8,34 @@
 class Observer
 {
 public:
-    virtual void Update();
+    virtual void update() = 0;
 };
 
-class FileObserver: Observer
+class FileObserver: public Observer
 {
+    FileObserver();
+
     public:
-        void Update();
+        void update(bool exist, bool new_exist, int size, int new_size);
 };
 
-void FileObserver::Update()
-{
-   std::cout << "File was removed" << "\n";
-}
 
-class FSubject
+class FSubject: public QObject
 {
     std::vector<FileObserver*> list;
 
     public:
-    std::string filepath;
-    std::QFile file;
-    bool fileexist;
-    float filesize;
+    QString file_path;
+    bool file_exist = false;
+    int file_size = -1;
 
-    void attach(FileObserver *isfile);
-    void detach(FileObserver *isfile);
-    void notify();
+    FSubject(QString path);
+    void attach(FileObserver *obs);
+    void detach(FileObserver *obs);
+    void startNotify();
     bool fileExist();
-    bool sizeChanged();
+    float getSize();
+    void notify();
 };
 
 

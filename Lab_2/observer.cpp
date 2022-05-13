@@ -2,7 +2,7 @@
 #include <QFile>
 #include <stdio.h>
 #include <QString>
-
+#include <thread>
 
 FileObserver::FileObserver()
 {
@@ -36,4 +36,62 @@ void FileObserver::update(bool exist, bool new_exist, int size, int new_size)
         }
 
     }
+}
+
+FSubject::FSubject(QString path)
+{
+    this->file_path = path;
+}
+
+bool FSubject::fileExist()
+{
+    if (QFile(this->file_path).exists())
+    {
+          return true;
+    }
+
+    return false;
+}
+
+float FSubject::getSize()
+{
+    int size = 0; //посчитать размер файала
+    size = QFile(this->file_path).size();
+
+    return size;
+}
+
+void FSubject::attach(FileObserver *obs)
+{
+    list.push_back(obs);
+}
+
+void FSubject::detach(FileObserver *obs)
+{
+    list.erase(std::remove(list.begin(), list.end(), obs), list.end());
+}
+
+
+void FSubject::startNotify()
+{
+  while(true)
+  {
+     this->notify();
+     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
+}
+
+
+void FSubject::notify()
+{
+    bool new_exist = this->fileExist();
+    int new_size = this->getSize();
+
+    for (std::vector<FileObserver*>::const_iterator iter = list.begin(); iter != list.end(); ++iter)
+    {
+    (*iter)->update(this->file_exist, new_exist, this->file_size, new_size);
+    }
+
+    this->file_exist = new_exist;
+    this->file_size = new_size;
 }
