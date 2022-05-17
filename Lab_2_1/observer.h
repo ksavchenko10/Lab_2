@@ -47,29 +47,29 @@ FileObserver::FileObserver() //конструктор
 }
 
 
-void FileObserver::update(bool exist, bool new_exist, int size, int new_size)
+void FileObserver::update(bool exist, bool new_exist, int size, int new_size) //вывод изменений
 {
     //setlocale(LC_ALL, "Russian");
 
-    if (new_exist != exist)
+    if (new_exist != exist) //если изменился статус существования файла
     {
-        if (new_exist)
+        if (new_exist) //если файл существует
         {
             printf("The file exists, the file is not empty. Size = %d bytes\n", new_size);
         }
-        else
+        else //если файла нет
         {
             printf("File does not exist\n");
         }
 
     }
-    else
+    else //если статус существования не изменился
     {
-        if (new_exist && new_size != size)
+        if (new_exist && new_size != size) //если существует и изменился размер
         {
             printf("The file exists, the file has been modified. New size = %d bytes\n", new_size);
         }
-        else if (!new_exist && size == -1)
+        else if (!new_exist && size == -1) //если не существует и это первая проверка, после первой проверки размер станет >=0
         {
              printf("File does not exist\n");
         }
@@ -80,12 +80,12 @@ void FileObserver::update(bool exist, bool new_exist, int size, int new_size)
 
 FSubject::FSubject(QString path)
 {
-    this->file_path = path;
+    this->file_path = path; //запоминаем путь к файлу
 }
 
 bool FSubject::fileExist()
 {
-     if (QFile(this->file_path).exists())
+     if (QFile(this->file_path).exists()) //если файл по заданному пути  существует
      {
          return true;
      }
@@ -96,7 +96,7 @@ bool FSubject::fileExist()
 float FSubject::getSize()
 {
     int size = 0;
-    size = QFile(this->file_path).size();
+    size = QFile(this->file_path).size(); //берем размер файла в байтах
 
     return size;
 }
@@ -104,37 +104,37 @@ float FSubject::getSize()
 
 void FSubject::attach(FileObserver *obs)
 {
-    list.push_back(obs);
+    list.push_back(obs); //добавляем наблюдателя в наш вектор
 }
 
 void FSubject::detach(FileObserver *obs)
 {
-    list.erase(std::remove(list.begin(), list.end(), obs), list.end());
+    list.erase(std::remove(list.begin(), list.end(), obs), list.end()); //удаляем наблюдателя из вектора
 }
 
 
-void FSubject::startNotify()
+void FSubject::startNotify() //запускаем постоянную проверку файла
 {
   while(true)
   {
-     this->notify();
-     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+     this->notify(); //вызываем метод проверки файла
+     std::this_thread::sleep_for(std::chrono::milliseconds(100)); //пауза 100 миллисекунд
   }
 }
 
 
 void FSubject::notify()
 {
-    bool new_exist = this->fileExist();
-    int new_size = this->getSize();
+    bool new_exist = this->fileExist(); //вычисляем существование файла
+    int new_size = this->getSize(); //вычисляем размер файла
 
-
+    //пробегаем по всем наблюдателям в нашем списке
     for (std::vector<FileObserver*>::const_iterator iter = list.begin(); iter != list.end(); ++iter)
     {
-        (*iter)->update(this->file_exist, new_exist, this->file_size, new_size);
+        (*iter)->update(this->file_exist, new_exist, this->file_size, new_size); //зпускаем у наблюдателей метод update для вывода информации о изменениях
     }
 
-    this->file_exist = new_exist;
-    this->file_size = new_size;
+    this->file_exist = new_exist; //запоминаем новое состояние файла
+    this->file_size = new_size; //запоминаем новый размер файла
 }
 #endif // OBSERVER_H
