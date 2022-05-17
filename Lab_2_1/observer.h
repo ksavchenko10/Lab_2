@@ -9,14 +9,14 @@
 
 
 
-class Observer
+class Observer //класс наблюдатель
 {
 public:
     virtual void update() = 0;
 
 };
 
-class FileObserver: public Observer
+class FileObserver: public Observer //конкретный класс наблюдатель за файлами
 {
     FileObserver();
 
@@ -24,25 +24,25 @@ class FileObserver: public Observer
         void update(bool exist, bool new_exist, int size, int new_size);
 };
 
-class FSubject: public QObject
+class FSubject: public QObject //класс для работы с файлом
 {
-    std::vector<FileObserver*> list;
+    std::vector<FileObserver*> list; //вектор наблюдателей
 
     public:
-    QString file_path;
-    bool file_exist = false;
-    int file_size = -1;
+    QString file_path; //путь к файлу
+    bool file_exist = false; //флаг состояние файла (существует/не сущетсвует)
+    int file_size = -1; //размер файла
 
-    FSubject(QString path);
-    void attach(FileObserver *obs);
-    void detach(FileObserver *obs);
-    void startNotify();
-    bool fileExist();
-    float getSize();
-    void notify();
+    FSubject(QString path); //конструктор
+    void attach(FileObserver *obs); //добавить наблюдателя
+    void detach(FileObserver *obs); //убрать наблюдателя
+    void startNotify(); //запустить постоянную проверку
+    bool fileExist(); //метод возвращающий существует файл или нет
+    float getSize(); //метод возвращающий размер файла
+    void notify(); //метод единоразовой проверки состояния файла и вызова метода наблюдателей
 };
 
-FileObserver::FileObserver()
+FileObserver::FileObserver() //конструктор
 {
 }
 
